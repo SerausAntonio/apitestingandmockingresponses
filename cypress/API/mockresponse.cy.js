@@ -6,9 +6,8 @@ describe("Mock api responses",()=>{
         cy.get('a[href$="login"]').click();
         cy.get('input[placeholder="Email"]').invoke('attr', 'formcontrolname').should('eq', 'email');
         cy.get('input[placeholder="Password"]').invoke('attr', 'formcontrolname').should('eq', 'password')
-        
-        
-
+    
+ 
     })
     it('Mock - Responses',()=>{
         cy.get('.btn').contains('Sign in')
@@ -52,13 +51,48 @@ describe("Mock api responses",()=>{
         .and('contain','testing');
               
     })
+
     //https://api.realworld.io/api/articles
-    it.only('Verify global feed likes count',()=>{
+    it('Verify global feed likes count',()=>{
         cy.intercept('GET','https://api.realworld.io/api/articles/feed*',{"articles":[],"articlesCount":0})
         cy.intercept('GET','https://api.realworld.io/api/articles?limit=10&offset=0',{fixture: 'articles.json'})
 
         cy.get('.btn').contains('Sign in')
         cy.logMeIn('pp123@gmail.com', 'cypress123');
-        cy.get('.nav-link').contains('Your Feed').click();          
+        cy.get('.nav-link').contains('Your Feed').click();   
+        cy.contains('Global Feed').click();
+     
+        cy.get('app-article-list button').then(heartList =>{
+            expect(heartList[0]).to.contain("1");
+            expect(heartList[1]).to.contain("5");
+            
+        })
+    })   
+    
+
+    it.only('verify global feed',()=>{
+      //  cy.get('.btn').contains('Sign in')
+       
+      //  cy.logMeIn('pp123@gmail.com', 'cypress123');
+       
+     //   cy.get('.nav-link').contains('Your Feed').click();   
+     //   cy.contains('Global Feed').click();
+
+        cy.fixture('articles').then(file =>{
+            const articleLink = file.articles[1].slug
+            file.articles[1].favoritesCount = 6
+            cy.intercept('POST','https://api.realworld.io/api/articles/'+articleLink+'/favorite',file)
+          
+        cy.get('.btn').contains('Sign in')
+       
+        cy.logMeIn('pp123@gmail.com', 'cypress123');
+            cy.get('app-article-List button').eq(1).click().should('contain','6');
+                         
+   
+        }) 
+
     })
+
+  
 })
+
