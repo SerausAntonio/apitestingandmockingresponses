@@ -9,15 +9,14 @@ describe("Mock api responses",()=>{
     
  
     })
-    it('Mock - Responses',()=>{
+    it.only('GET - Request',()=>{
         cy.get('.btn').contains('Sign in')
         cy.logMeIn('pp123@gmail.com', 'cypress123');
 
         cy.request('GET','https://api.realworld.io/api/tags')
         .as('getTags')
     
-
-      //  cy.wait("@getTags")
+ 
         cy.get("@getTags").then(xhr =>{
             const tags = xhr.body.tags;
             cy.wrap(tags).its('length').should('eq',10)
@@ -70,7 +69,7 @@ describe("Mock api responses",()=>{
     })   
     
 
-    it.only('verify global feed',()=>{
+    it('verify global feed',()=>{
       //  cy.get('.btn').contains('Sign in')
        
       //  cy.logMeIn('pp123@gmail.com', 'cypress123');
